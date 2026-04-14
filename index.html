@@ -11,6 +11,7 @@
     MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
   <style>
     body {
@@ -173,6 +174,10 @@
         </ul>
         <p id="mathLive" style="margin-top:12px"><i>Upload audio and press Apply Fourier Transform to see your signal
             reconstructed as a sum of sinusoids.</i></p>
+        <div style="margin-top:18px; text-align:center">
+          <canvas id="qrCanvas"></canvas>
+          <div style="font-size:11px; color:#888; margin-top:4px">dspdft.web.app</div>
+        </div>
       </div>
     </div>
 
@@ -539,7 +544,13 @@
       const shown = box.style.display !== 'none';
       box.style.display = shown ? 'none' : 'block';
       $('mathToggle').textContent = shown ? 'I LOVE DSP ?' : 'Hide DSP';
-      if (!shown && window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([box]);
+      if (!shown) {
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([box]);
+        if (!$('qrCanvas').dataset.rendered) {
+          QRCode.toCanvas($('qrCanvas'), 'https://dspdft.web.app', { width: 160, margin: 2 });
+          $('qrCanvas').dataset.rendered = '1';
+        }
+      }
     });
   </script>
 </body>
