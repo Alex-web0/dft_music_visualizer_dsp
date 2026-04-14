@@ -107,6 +107,7 @@
     <div class="box">
       <h3>1. Upload &amp; Transform</h3>
       <input type="file" id="fileInput" accept="audio/*"><br>
+      <div id="presets" style="margin:6px 0"></div>
       <button id="transformBtn" disabled>⚡ Apply Fourier Transform</button>
       <button id="playBtn" disabled>Play</button>
       <button id="stopBtn" disabled>Stop</button>
@@ -298,6 +299,23 @@
       const file = e.target.files[0]; if (!file) return;
       await loadAudio(await file.arrayBuffer());
     });
+
+    // Pre-fetch the two bundled samples at startup and expose as buttons.
+    const sampleCache = {};
+    (async () => {
+      for (let i = 1; i <= 2; i++) {
+        const url = `sample_${i}_dsp.mp3`;
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          sampleCache[i] = await res.arrayBuffer();
+          const btn = document.createElement('button');
+          btn.textContent = `🎵 Sample ${i}`;
+          btn.onclick = () => loadAudio(sampleCache[i].slice(0)); // slice = fresh copy each load
+          $('presets').appendChild(btn);
+        } catch (e) {}
+      }
+    })();
 
     // =========================================================
     // 2. Apply FFT on the full song
