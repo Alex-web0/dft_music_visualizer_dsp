@@ -313,7 +313,7 @@
           btn.textContent = `🎵 Sample ${i}`;
           btn.onclick = () => loadAudio(sampleCache[i].slice(0)); // slice = fresh copy each load
           $('presets').appendChild(btn);
-        } catch (e) {}
+        } catch (e) { }
       }
     })();
 
