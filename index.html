@@ -150,6 +150,12 @@
       <div id="bins">Upload audio and press Apply Fourier Transform.</div>
     </div>
 
+    <!-- Prominent frequencies -->
+    <div class="box" style="grid-column: 1 / -1;">
+      <h3>Top Prominent Frequencies</h3>
+      <div id="prominentFreqs" style="font-size:13px">Upload audio and press Apply Fourier Transform.</div>
+    </div>
+
     <!-- 6. Math showcase (button-first) -->
     <div class="box" style="grid-column: 1 / -1;">
       <button id="mathToggle"
@@ -515,6 +521,37 @@
           }
         }
       });
+
+      // update prominent frequencies panel
+      updateProminentFreqs(re, im);
+    }
+
+    function updateProminentFreqs(re, im) {
+      const N = re.length, half = N / 2;
+      const peaks = [];
+      for (let k = 1; k < half; k++) {
+        const mag = Math.sqrt(re[k] * re[k] + im[k] * im[k]);
+        peaks.push({ k, mag, freq: Math.round(k * sampleRate / N) });
+      }
+      peaks.sort((a, b) => b.mag - a.mag);
+      const top = peaks.slice(0, 15);
+      const maxMag = top[0] ? top[0].mag : 1;
+
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+      html += '<tr style="border-bottom:1px solid #ccc;font-weight:bold"><td>#</td><td>Frequency</td><td>Magnitude</td><td style="width:50%">Prominence</td></tr>';
+      top.forEach((p, i) => {
+        const pct = ((p.mag / maxMag) * 100).toFixed(1);
+        const band = BANDS.find(b => p.freq >= b[1] && p.freq < b[2]);
+        const bandName = band ? band[0] : (p.freq < 20 ? 'Infra' : 'Ultra');
+        html += `<tr style="border-bottom:1px solid #eee">`;
+        html += `<td style="padding:3px 6px">${i + 1}</td>`;
+        html += `<td style="padding:3px 6px">${p.freq.toLocaleString()} Hz <span style="color:#888;font-size:11px">(${bandName})</span></td>`;
+        html += `<td style="padding:3px 6px">${p.mag.toFixed(1)}</td>`;
+        html += `<td style="padding:3px 6px"><div style="background:#aa3300;height:14px;border-radius:3px;width:${pct}%"></div></td>`;
+        html += `</tr>`;
+      });
+      html += '</table>';
+      $('prominentFreqs').innerHTML = html;
     }
 
     // =========================================================
@@ -522,6 +559,17 @@
     // =========================================================
     function buildBands() {
       const div = $('bins'); div.innerHTML = '';
+      const toggleBtn = document.createElement('button');
+      toggleBtn.textContent = 'Deselect All';
+      toggleBtn.style.cssText = 'margin-bottom:6px;font-size:12px';
+      toggleBtn.addEventListener('click', () => {
+        const boxes = div.querySelectorAll('input[type=checkbox]');
+        const allOff = [...boxes].every(c => !c.checked);
+        boxes.forEach(c => c.checked = allOff);
+        toggleBtn.textContent = allOff ? 'Deselect All' : 'Select All';
+        applyAll(); if (sourceNode) $('playBtn').click();
+      });
+      div.appendChild(toggleBtn);
       BANDS.forEach((b, i) => {
         const lbl = document.createElement('label');
         lbl.innerHTML = `<input type="checkbox" id="band${i}" checked> ${b[0]} (${b[1]}-${b[2]} Hz)`;
