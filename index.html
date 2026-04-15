@@ -11,7 +11,6 @@
     MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
   <style>
     body {
@@ -140,7 +139,7 @@
 
     <!-- 3. FFT spectrum -->
     <div class="box">
-      <h3>3. Frequency spectrum (FFT)</h3>
+      <h3>3. Frequency spectrum (DFT)</h3>
       <canvas id="fftCanvas" height="140"></canvas>
     </div>
 
@@ -162,7 +161,7 @@
         style="background:#6a4c93;color:#fff;border:none;font-size:16px;padding:10px 18px;font-weight:bold">I LOVE DSP
         ?</button>
       <a href="https://github.com/Alex-web0/dft_music_visualizer_dsp" target="_blank" rel="noopener noreferrer"
-        style="display:inline-block;background:#333;color:#fff;border:none;font-size:16px;padding:10px 18px;font-weight:bold;text-decoration:none;margin-left:4px;cursor:pointer">&#128187;
+        style="display:inline-block;background:#333;color:#fff;border:none;font-size:13px;padding:10px 18px;font-weight:bold;text-decoration:none;margin-left:4px;cursor:pointer">
         Source Code</a>
       <div id="mathBox" style="display:none; font-size:14px; line-height:1.7; margin-top:12px">
         <p><b>Discrete Fourier Transform (forward):</b></p>
@@ -614,12 +613,10 @@
       }
     });
 
-    // Render QR code at bottom on load
-    QRCode.toCanvas($('qrCanvas'), 'https://dspdft.web.app', { width: 160, margin: 2 });
   </script>
 
   <div style="text-align:center; margin-top:40px; padding:20px 0 30px">
-    <canvas id="qrCanvas"></canvas>
+    <img src="qr.png" alt="QR code for dspdft.web.app" style="width:160px;height:160px">
     <div style="font-size:11px; color:#888; margin-top:4px">dspdft.web.app</div>
     <div style="margin-top:10px; font-size:13px; color:#666">made with love by saleh waleed &#10084;</div>
   </div>
